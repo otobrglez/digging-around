@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
 
-# require "bundler/setup"
-# require "pp"
-
 class Book < Struct.new(:title)
 
   def words

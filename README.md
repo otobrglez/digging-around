@@ -6,4 +6,8 @@ Code from my machine learning blogging series.
 
 ## Examples
 
-- Simple content/tag based recommendation system. [Article](http://otobrglez.opalab.com/ruby/2014/03/23/simple-ruby-recommendation-system.html) / [code](code/001-jaccard.rb).
+- Simple content/tag based recommendation system. [Article](http://otobrglez.opalab.com/ruby/2014/03/23/simple-ruby-recommendation-system.html) and [code](code/001-jaccard.rb).
+
+    ```ruby
+    ruby code/001-jaccard.rb
+    ```
