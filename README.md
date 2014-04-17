@@ -11,3 +11,9 @@ Code from my machine learning blogging series.
     ```ruby
     ruby code/001-jaccard.rb
     ```
+
+- Simple star-based recommendation system. [code](code/002-users.rb)
+
+    ```ruby
+    ruby code/002-users.rb
+    ```
