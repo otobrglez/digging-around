@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'pp'
-require 'pry'
-require 'pry-remote'
 
 class Movie < Struct.new(:id, :name); end
 
@@ -18,8 +16,12 @@ class Recommender
     @similarity ||= USERS.combination(2).map do |a, b|
 
       pairs = MOVIES.map do |movie|
-        rating_from_a = RATINGS.detect {|r| r.user_id == a.id and r.movie_id == movie.id }[:rating] rescue 0.0
-        rating_from_b = RATINGS.detect {|r| r.user_id == b.id and r.movie_id == movie.id }[:rating] rescue 0.0
+        rating_from_a = RATINGS
+          .find {|r| r.user_id == a.id and r.movie_id == movie.id }[:rating] rescue 0.0
+
+        rating_from_b = RATINGS
+          .find {|r| r.user_id == b.id and r.movie_id == movie.id }[:rating] rescue 0.0
+
         (rating_from_b - rating_from_a) ** 2
       end
 
@@ -36,7 +38,9 @@ class Recommender
   end
 
   def movies_to user
-    ids_of_movies_user_has_seen = RATINGS.select {|r| r.user_id == user.id }.map(&:movie_id)
+    ids_of_movies_user_has_seen = RATINGS
+      .select {|r| r.user_id == user.id }
+      .map(&:movie_id)
 
     first_similar_user = users_to(user).first
 
@@ -51,7 +55,7 @@ class Recommender
 
     movies = []
     movies_to_recommend.each do |movie_id|
-      movies << MOVIES.detect{ |m| m.id == movie_id }
+      movies << MOVIES.find{ |m| m.id == movie_id }
     end
 
     movies
