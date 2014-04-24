@@ -2,13 +2,17 @@
 
 require 'pp'
 
-class Movie < Struct.new(:id, :name); end
+class Movie < Struct.new(:id, :name)
+end
 
-class User < Struct.new(:id, :name); end
+class User < Struct.new(:id, :name)
+end
 
-class Rating < Struct.new(:id, :user_id, :movie_id, :rating); end
+class Rating < Struct.new(:id, :user_id, :movie_id, :rating)
+end
 
-class Similarity < Struct.new(:a, :b, :score); end
+class Similarity < Struct.new(:a, :b, :score)
+end
 
 class Recommender
 
