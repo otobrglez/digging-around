@@ -1,6 +1,6 @@
-# Learning machine learning with Ruby
+# Digging around with Ruby
 
-Code from my machine learning blogging series.
+Code from my blogging series.
 
 - [Oto Brglez](http://otobrglez.opalab.com)
 
@@ -17,3 +17,5 @@ Code from my machine learning blogging series.
     ```ruby
     ruby code/002-users.rb
     ```
+
+- Small algorithm behind big-data. MapReduce explained with Ruby

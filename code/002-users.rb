@@ -1,18 +1,15 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby -w
 
 require 'pp'
 
-class Movie < Struct.new(:id, :name)
-end
+class Movie < Struct.new(:id, :name); end
 
-class User < Struct.new(:id, :name)
-end
+class User < Struct.new(:id, :name); end
 
-class Rating < Struct.new(:id, :user_id, :movie_id, :rating)
-end
+class Rating < Struct.new(:id, :user_id, :movie_id, :rating); end
 
-class Similarity < Struct.new(:a, :b, :score)
-end
+class Similarity < Struct.new(:a, :b, :score); end
+
 
 class Recommender
 
@@ -20,18 +17,15 @@ class Recommender
     @similarity ||= USERS.combination(2).map do |a, b|
 
       pairs = MOVIES.map do |movie|
-        rating_from_a = RATINGS
-          .find {|r| r.user_id == a.id and r.movie_id == movie.id }[:rating] rescue 0.0
-
-        rating_from_b = RATINGS
-          .find {|r| r.user_id == b.id and r.movie_id == movie.id }[:rating] rescue 0.0
+        rating_from_a = rating_for(a, movie)
+        rating_from_b = rating_for(b, movie)
 
         (rating_from_b - rating_from_a) ** 2
       end
 
       score = 1/(1+Math.sqrt(pairs.inject(&:+)))
 
-      Similarity.new(a.id, b.id, score.round(3) )
+      Similarity.new a.id, b.id, score.round(3)
     end
   end
 
@@ -65,32 +59,48 @@ class Recommender
     movies
   end
 
+  def rating_for(user, movie)
+    RATINGS.find {|r| r.user_id == user.id and r.movie_id == movie.id }[:rating] rescue 0.0
+  end
+
 end
 
 ############################################################
 # Loading movies, users and ratings
 ############################################################
 
-# Read and parse the data from end of this file
-MOVIES = DATA.read.split("\n").grep(/^M/) do |p|
-  Movie.new *((p.split(' ', 3)[1,2]).map.with_index { |v,i|
-    if i == 0; v.to_i; else v; end })
-end; DATA.rewind
+MOVIES = []
+MOVIES << Movie.new(10, 'Matrix')
+MOVIES << Movie.new(20, 'Jurassic Park')
+MOVIES << Movie.new(30, 'Australia')
+MOVIES << Movie.new(40, 'Forest gump')
 
-USERS = DATA.read.split("\n").grep(/^U\s/) do |p|
-  User.new *((p.split(' ', 3)[1,2]).map.with_index { |v,i|
-    if i == 0; v.to_i; else v; end })
-end; DATA.rewind
+USERS = []
+USERS << User.new(1, 'Oto')
+USERS << User.new(2, 'Jack')
+USERS << User.new(3, 'Mike')
+USERS << User.new(4, 'Frank')
+USERS << User.new(5, 'Luke')
 
-RATINGS = DATA.read.split("\n").grep(/^\d+\s+/) do |p|
-  Rating.new *p.split(' ').map(&:to_i)
-end
+RATINGS = []
+RATINGS << Rating.new( 1, 1, 10, 5)
+RATINGS << Rating.new( 2, 1, 20, 5)
+RATINGS << Rating.new( 3, 1, 40, 2)
+RATINGS << Rating.new( 4, 2, 10, 4)
+RATINGS << Rating.new( 5, 2, 20, 5)
+RATINGS << Rating.new( 6, 2, 30, 2)
+RATINGS << Rating.new( 7, 2, 40, 2)
+RATINGS << Rating.new( 8, 3, 20, 3)
+RATINGS << Rating.new( 9, 3, 30, 3)
+RATINGS << Rating.new(10, 3, 40, 4)
+RATINGS << Rating.new(11, 4, 30, 5)
+RATINGS << Rating.new(12, 5, 10, 2)
+RATINGS << Rating.new(13, 5, 30, 5)
+RATINGS << Rating.new(14, 5, 40, 4)
 
 ############################################################
 # Usage
 ############################################################
-
-
 
 # Find user "Frank"
 frank = USERS.find { |u| u.name == 'Frank' }
@@ -104,36 +114,3 @@ pp users
 # Recommend something that he hasn't watched yet, but other buddies have
 movies = recommender.movies_to frank
 pp movies
-
-
-
-__END__
-
-type  id  name
-M     10  Matrix
-M     20  Jurassic Park
-M     30  Australia
-M     40  Forest gump
-
-type  id  name
-U     1   Oto
-U     2   Jack
-U     3   Mike
-U     4   Frank
-U     5   Luke
-
-id  user_id movie_id rating
-1   1       10        5
-2   1       20        5
-3   1       40        2
-4   2       10        4
-5   2       20        5
-6   2       30        2
-7   2       40        2
-8   3       20        3
-9   3       30        3
-10  3       40        4
-11  4       30        5
-12  5       10        2
-13  5       30        5
-14  5       40        4
